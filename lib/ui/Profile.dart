@@ -26,6 +26,7 @@ class _ProfileState extends State<Profile> {
   TextEditingController mobileNumberController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController memberNameController = TextEditingController();
+  final FocusNode updateNode = FocusNode();
   FlatsModel flatsModel;
   List societies;
   List<String> societyNames;
@@ -494,6 +495,7 @@ class _ProfileState extends State<Profile> {
                         Container(
                           width: MediaQuery.of(context).size.width * 0.8,
                           child: RaisedButton(
+                            focusNode: updateNode,
                             color: Colors.white,
                             onPressed: () async {
                               if (_formKey.currentState.validate()) {
@@ -521,6 +523,8 @@ class _ProfileState extends State<Profile> {
                                               "Updated Successfully !",
                                               style: TextStyle(
                                                   fontFamily: 'Raleway'))));
+                                  FocusScope.of(context)
+                                      .requestFocus(updateNode);
                                 } else {
                                   Navigator.pop(context);
                                   _scaffoldKey.currentState.showSnackBar(

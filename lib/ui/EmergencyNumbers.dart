@@ -26,6 +26,10 @@ class _EmergencyNumbersState extends State<EmergencyNumbers> {
     }
   }
 
+  Future<Null> getRefresh() async {
+    await Future.delayed(Duration(seconds: 2));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,46 +39,49 @@ class _EmergencyNumbersState extends State<EmergencyNumbers> {
         elevation: 0.0,
         title: Text("Emergency Numbers"),
       ),
-      body: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: ListView.builder(
-            itemCount: 10,
-            shrinkWrap: true,
-            itemBuilder: (ctx, index) => Card(
-              color: Colors.blue,
-              child: ListTile(
-                title: Text(
-                  "Ambulance ( Kothrud )",
-                  style: TextStyle(color: Colors.white),
-                ),
-                subtitle: Text(
-                  "100",
-                  style: TextStyle(color: Colors.white),
-                ),
-                leading: IconButton(
-                  onPressed: () {
-                    callPerson('100');
-                  },
-                  icon: Icon(
-                    Icons.phone,
-                    color: Colors.white,
-                    size: 35,
+      body: RefreshIndicator(
+        onRefresh: getRefresh,
+        child: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: ListView.builder(
+              itemCount: 10,
+              shrinkWrap: true,
+              itemBuilder: (ctx, index) => Card(
+                color: Colors.blue,
+                child: ListTile(
+                  title: Text(
+                    "Ambulance ( Kothrud )",
+                    style: TextStyle(color: Colors.white),
                   ),
-                ),
-                trailing: IconButton(
-                  onPressed: () {
-                    locationPerson();
-                  },
-                  icon: Icon(
-                    Icons.location_on,
-                    color: Colors.white,
-                    size: 25,
+                  subtitle: Text(
+                    "100",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  leading: IconButton(
+                    onPressed: () {
+                      callPerson('100');
+                    },
+                    icon: Icon(
+                      Icons.phone,
+                      color: Colors.white,
+                      size: 35,
+                    ),
+                  ),
+                  trailing: IconButton(
+                    onPressed: () {
+                      locationPerson();
+                    },
+                    icon: Icon(
+                      Icons.location_on,
+                      color: Colors.white,
+                      size: 25,
+                    ),
                   ),
                 ),
               ),
-            ),
-          )),
+            )),
+      ),
     );
   }
 }

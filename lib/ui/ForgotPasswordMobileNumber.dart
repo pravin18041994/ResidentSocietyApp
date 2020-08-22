@@ -18,8 +18,8 @@ class _ForgotPasswordMobileNumberState
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-backgroundColor: Colors.blue[400],      
-body: AlertDialog(
+      backgroundColor: Colors.blue[400],
+      body: AlertDialog(
         elevation: 0.0,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12.0),
@@ -31,16 +31,21 @@ body: AlertDialog(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               TextFormField(
-                  keyboardType: TextInputType.number,
+                  style: TextStyle(color: Colors.blue),
+                  keyboardType: TextInputType.phone,
                   onChanged: changePasswordBloc.getContact,
                   inputFormatters: [
                     WhitelistingTextInputFormatter.digitsOnly,
                     LengthLimitingTextInputFormatter(10)
                   ],
                   decoration: InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blue)),
+                      enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blue)),
                       labelText: ' Mobile Number',
                       labelStyle: TextStyle(
-                        color: Colors.black,
+                        color: Colors.blue,
                         fontWeight: FontWeight.bold,
                       ),
                       border: UnderlineInputBorder())),
@@ -71,7 +76,7 @@ body: AlertDialog(
                 child: Text(
                   "Submit",
                   style: TextStyle(
-                    color: Colors.black,
+                    color: Colors.blue,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

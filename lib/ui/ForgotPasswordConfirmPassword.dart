@@ -16,6 +16,11 @@ class _ForgotPasswordConfirmPasswordState
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   var resp;
+  var newPasswordEye = Icons.visibility_off;
+  var confirmPasswordEye = Icons.visibility_off;
+  var newPasswordObscureText = true;
+  var confirmPasswordObscureText = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,21 +38,47 @@ class _ForgotPasswordConfirmPasswordState
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               TextFormField(
-                  obscureText: true,
+                  obscureText: newPasswordObscureText,
                   controller: password,
                   decoration: InputDecoration(
-                      labelText: ' Set Password',
+                      suffixIcon: IconButton(
+                          icon: Icon(newPasswordEye),
+                          onPressed: () {
+                            setState(() {
+                              if (newPasswordEye == Icons.visibility_off) {
+                                newPasswordObscureText = false;
+                                newPasswordEye = Icons.visibility;
+                              } else {
+                                newPasswordEye = Icons.visibility_off;
+                                newPasswordObscureText = true;
+                              }
+                            });
+                          }),
+                      labelText: ' New Password',
                       labelStyle: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
                       border: UnderlineInputBorder())),
               TextFormField(
-                  obscureText: true,
+                  obscureText: confirmPasswordObscureText,
                   controller: confirmPassword,
                   onChanged: changePasswordBloc.getPassword,
                   decoration: InputDecoration(
                       labelText: ' Confirm Password',
+                      suffixIcon: IconButton(
+                          icon: Icon(newPasswordEye),
+                          onPressed: () {
+                            setState(() {
+                              if (confirmPasswordEye == Icons.visibility_off) {
+                                confirmPasswordObscureText = false;
+                                confirmPasswordEye = Icons.visibility;
+                              } else {
+                                confirmPasswordEye = Icons.visibility_off;
+                                confirmPasswordObscureText = true;
+                              }
+                            });
+                          }),
                       labelStyle: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -65,6 +96,7 @@ class _ForgotPasswordConfirmPasswordState
                         await changePasswordBloc.changePasswordConfirmation();
                     if (resp == 'success') {
                       Navigator.pop(context);
+
                       Navigator.push(context, MaterialPageRoute(builder: (_) {
                         return Login();
                       }));

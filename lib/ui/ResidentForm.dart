@@ -26,6 +26,8 @@ class _ResidentFormState extends State<ResidentForm> {
   List<String> flats;
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final FocusNode nodeRelation = FocusNode();
+  final FocusNode nodeSubmitButton = FocusNode();
 
   @override
   void initState() {
@@ -113,6 +115,7 @@ class _ResidentFormState extends State<ResidentForm> {
                               "Father",
                               "Mother",
                               "Son",
+                              "Brother",
                               "Daughter",
                               "Wife",
                               "Friends",
@@ -143,6 +146,9 @@ class _ResidentFormState extends State<ResidentForm> {
                                     'relation': dropdownValueRelation.toString()
                                   });
                                   Navigator.pop(context);
+                                  FocusScope.of(context)
+                                      .requestFocus(nodeSubmitButton);
+                                      memberNameController.clear();
                                 });
                               },
                               shape: RoundedRectangleBorder(
@@ -204,9 +210,10 @@ class _ResidentFormState extends State<ResidentForm> {
           elevation: 0.0,
           backgroundColor: Colors.transparent,
           centerTitle: true,
+          iconTheme: IconThemeData(color: Colors.white),
           title: Text(
             "Resident Registration ",
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
         body: Container(
@@ -218,16 +225,12 @@ class _ResidentFormState extends State<ResidentForm> {
                   shrinkWrap: true,
                   children: <Widget>[
                     Container(
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.centerRight,
-                              end: Alignment.centerLeft,
-                              colors: [Colors.blue[400], Colors.blue[400]])),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           ListTile(
                             title: DropdownButton<String>(
+                              style: TextStyle(color: Colors.white),
                               value: dropdownValueSocietyType,
                               icon: Icon(
                                 Icons.keyboard_arrow_down,
@@ -238,11 +241,11 @@ class _ResidentFormState extends State<ResidentForm> {
                               hint: Text(
                                 "Society/Apartment",
                                 style: TextStyle(
-                                    color: Colors.black, fontSize: 15.0),
+                                    color: Colors.white, fontSize: 15.0),
                               ),
                               underline: Container(
                                 height: 1,
-                                color: Colors.black,
+                                color: Colors.white,
                               ),
                               onChanged: (String newValue) {
                                 setState(() {
@@ -268,6 +271,8 @@ class _ResidentFormState extends State<ResidentForm> {
                           ),
                           ListTile(
                             title: TextFormField(
+                              cursorColor: Colors.white,
+                              style: TextStyle(color: Colors.white),
                               validator: (value) {
                                 if (value.isEmpty) {
                                   return 'Please Enter Owner Name !';
@@ -276,9 +281,15 @@ class _ResidentFormState extends State<ResidentForm> {
                               },
                               onChanged: residentBloc.getUserOwnerName,
                               decoration: InputDecoration(
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white)),
+                                  enabledBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white)),
                                   labelText: "Owner Name",
                                   labelStyle: TextStyle(
-                                    color: Colors.black,
+                                    color: Colors.white,
                                   )),
                             ),
                           ),
@@ -294,11 +305,11 @@ class _ResidentFormState extends State<ResidentForm> {
                               hint: Text(
                                 "Flat Number",
                                 style: TextStyle(
-                                    color: Colors.black, fontSize: 15.0),
+                                    color: Colors.white, fontSize: 15.0),
                               ),
                               underline: Container(
                                 height: 1,
-                                color: Colors.black,
+                                color: Colors.white,
                               ),
                               onChanged: (String newValue) {
                                 setState(() {
@@ -323,6 +334,8 @@ class _ResidentFormState extends State<ResidentForm> {
                           ),
                           ListTile(
                             title: TextFormField(
+                              style: TextStyle(color: Colors.white),
+                              cursorColor: Colors.white,
                               validator: (value) {
                                 if (value.isEmpty) {
                                   return 'Please Enter Contact Number !';
@@ -333,21 +346,29 @@ class _ResidentFormState extends State<ResidentForm> {
                                 }
                                 return null;
                               },
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.phone,
                               inputFormatters: [
                                 WhitelistingTextInputFormatter.digitsOnly,
                                 LengthLimitingTextInputFormatter(10)
                               ],
                               onChanged: residentBloc.getUserMobileNumber,
                               decoration: InputDecoration(
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white)),
+                                  enabledBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white)),
                                   labelText: "Mobile Number",
                                   labelStyle: TextStyle(
-                                    color: Colors.black,
+                                    color: Colors.white,
                                   )),
                             ),
                           ),
                           ListTile(
                             title: TextFormField(
+                              cursorColor: Colors.white,
+                              style: TextStyle(color: Colors.white),
                               validator: (value) {
                                 if (value.isEmpty) {
                                   return 'Please Enter Email !';
@@ -357,14 +378,22 @@ class _ResidentFormState extends State<ResidentForm> {
                               },
                               onChanged: residentBloc.getUserEmail,
                               decoration: InputDecoration(
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white)),
+                                  enabledBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white)),
                                   labelText: "Email",
                                   labelStyle: TextStyle(
-                                    color: Colors.black,
+                                    color: Colors.white,
                                   )),
                             ),
                           ),
                           ListTile(
                             title: TextFormField(
+                              style: TextStyle(color: Colors.white),
+                              cursorColor: Colors.white,
                               validator: (value) {
                                 if (value.isEmpty) {
                                   return 'Please Enter Password !';
@@ -375,9 +404,19 @@ class _ResidentFormState extends State<ResidentForm> {
                               obscureText: true,
                               onChanged: residentBloc.getUserPassword,
                               decoration: InputDecoration(
+                                  suffixIcon: IconButton(
+                                      color: Colors.white,
+                                      icon: Icon(Icons.visibility),
+                                      onPressed: () {}),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white)),
+                                  enabledBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white)),
                                   labelText: "Password",
                                   labelStyle: TextStyle(
-                                    color: Colors.black,
+                                    color: Colors.white,
                                   )),
                             ),
                           ),
@@ -388,21 +427,21 @@ class _ResidentFormState extends State<ResidentForm> {
                               },
                               tooltip: "Add Family Details",
                               icon: Icon(
-                                Icons.add,
-                                color: Colors.black,
+                                Icons.add_box,
+                                color: Colors.white,
                                 size: 25.0,
                               ),
                             ),
                             title: Text(
                               "Family Details",
-                              style: TextStyle(color: Colors.black),
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                           Container(
                             height: MediaQuery.of(context).size.height * 0.25,
                             margin: EdgeInsets.only(left: 10.0, right: 10.0),
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black),
+                                border: Border.all(color: Colors.white),
                                 borderRadius: BorderRadius.circular(12.0)),
                             child: ListView.builder(
                                 shrinkWrap: true,
@@ -411,12 +450,14 @@ class _ResidentFormState extends State<ResidentForm> {
                                     : familyDetails.length,
                                 itemBuilder: (context, index) {
                                   return ListTile(
-                                    title: Text(familyDetails[index]['name']
-                                            .toString() +
-                                        "(" +
-                                        familyDetails[index]['relation']
-                                            .toString() +
-                                        ")"),
+                                    title: Text(
+                                      familyDetails[index]['name'].toString() +
+                                          " ( " +
+                                          familyDetails[index]['relation']
+                                              .toString() +
+                                          " ) ",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                   );
                                 }),
                           ),

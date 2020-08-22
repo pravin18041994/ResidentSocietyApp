@@ -144,7 +144,9 @@ class _LoginState extends State<Login> {
                         child: Text(
                           'Smart Society',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 35.0),
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 35.0),
                         ),
                       ),
                     ),
@@ -154,6 +156,7 @@ class _LoginState extends State<Login> {
                         child: Text(
                           'Login',
                           style: TextStyle(
+                            color: Colors.white,
                             fontSize: 20.0,
                             fontWeight: FontWeight.bold,
                           ),
@@ -170,8 +173,10 @@ class _LoginState extends State<Login> {
                               borderRadius: BorderRadius.circular(12.0),
                             ),
                             child: TextFormField(
+                              style: TextStyle(color: Colors.white),
+                              cursorColor: Colors.white,
                               onChanged: loginBloc.getUserContact,
-                              keyboardType: TextInputType.number,
+                              keyboardType: TextInputType.phone,
                               inputFormatters: [
                                 LengthLimitingTextInputFormatter(10),
                                 WhitelistingTextInputFormatter.digitsOnly
@@ -187,19 +192,27 @@ class _LoginState extends State<Login> {
                                 return null;
                               },
                               decoration: InputDecoration(
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white)),
+                                  enabledBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white)),
                                   suffixIcon: Icon(
                                     Icons.phone,
-                                    color: Colors.black,
+                                    color: Colors.white,
                                   ),
                                   labelText: "Contact",
-                                  labelStyle: TextStyle(color: Colors.black)),
+                                  labelStyle: TextStyle(color: Colors.white)),
                             ),
                           ),
                           Container(
                             width: MediaQuery.of(context).size.width * 0.90,
                             child: TextFormField(
                               onChanged: loginBloc.getUserPassword,
-                              obscureText: true,
+                              style: TextStyle(color: Colors.white),
+                              cursorColor: Colors.white,
+                              obscureText: passwordVisible,
                               validator: (value) {
                                 if (value.isEmpty) {
                                   return 'Please Enter Password !';
@@ -208,16 +221,28 @@ class _LoginState extends State<Login> {
                                 return null;
                               },
                               decoration: InputDecoration(
+                                  enabledBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white)),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white)),
                                   suffixIcon: IconButton(
+                                    color: Colors.white,
                                     onPressed: () {
                                       setState(() {
                                         if (i.toString() ==
-                                            Icon(Icons.visibility_off)
-                                                .toString()) {
+                                            Icon(
+                                              Icons.visibility_off,
+                                            ).toString()) {
                                           print("inhere");
-                                          i = Icon(Icons.visibility);
+                                          i = Icon(
+                                            Icons.visibility,
+                                          );
                                         } else {
-                                          i = Icon(Icons.visibility_off);
+                                          i = Icon(
+                                            Icons.visibility_off,
+                                          );
                                         }
                                         passwordVisible = !passwordVisible;
                                       });
@@ -225,7 +250,7 @@ class _LoginState extends State<Login> {
                                     icon: i,
                                   ),
                                   labelText: "Password",
-                                  labelStyle: TextStyle(color: Colors.black)),
+                                  labelStyle: TextStyle(color: Colors.white)),
                             ),
                           ),
                         ],
@@ -239,13 +264,12 @@ class _LoginState extends State<Login> {
                             borderRadius: BorderRadius.circular(12.0),
                             side: BorderSide(color: Colors.black)),
                         onPressed: () async {
-                          
                           if (_formKey.currentState.validate()) {
                             loginBloc.dialogLoader(context);
                             resp = await loginBloc.login();
                             if (resp == "success") {
                               loginBloc.dispose();
-                              Navigator.pop(context); 
+                              Navigator.pop(context);
                               Navigator.push(context,
                                   MaterialPageRoute(builder: (_) {
                                 return MainPage();
@@ -274,8 +298,10 @@ class _LoginState extends State<Login> {
                             dialogBoxUserType();
                           },
                           child: Text(
-                            "New User?",
-                            style: TextStyle(),
+                            "New User ?",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
                         InkWell(
@@ -287,7 +313,9 @@ class _LoginState extends State<Login> {
                           },
                           child: Text(
                             "Forgot Password?",
-                            style: TextStyle(),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
                           ),
                         )
                       ],

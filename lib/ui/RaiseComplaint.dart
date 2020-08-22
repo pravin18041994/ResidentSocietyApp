@@ -17,6 +17,12 @@ class _RaiseComplaintState extends State<RaiseComplaint> {
   var resp;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   var isLoading = true;
+  final _formKey = GlobalKey<FormState>();
+  final FocusNode nodeSubject = FocusNode();
+  final FocusNode nodeMessage = FocusNode();
+  final FocusNode nodeSubmitButton = FocusNode();
+  TextEditingController subjectController = TextEditingController();
+  TextEditingController messageController = TextEditingController();
 
   List<ComplaintsModel> complaints;
 
@@ -33,6 +39,11 @@ class _RaiseComplaintState extends State<RaiseComplaint> {
     setState(() {
       img = image;
     });
+  }
+
+  Future<Null> getRefresh() async {
+    getComplaints();
+    await Future.delayed(Duration(seconds: 2));
   }
 
   @override
@@ -53,22 +64,12 @@ class _RaiseComplaintState extends State<RaiseComplaint> {
     //print('c'+complaints.toString());
   }
 
-  Future<Null> getRefresh() async {
-    try {
-      getComplaints();
-      await Future.delayed(Duration(seconds: 2));
-    } catch (e) {
-      // checkInternetConnection();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         key: _scaffoldKey,
-        backgroundColor: Colors.blue[400],
         appBar: AppBar(
           backgroundColor: Colors.blue[400],
           iconTheme: IconThemeData(color: Colors.white),
@@ -101,234 +102,289 @@ class _RaiseComplaintState extends State<RaiseComplaint> {
               )
             : TabBarView(
                 children: [
-                  ListView(
-                    shrinkWrap: true,
-                    children: <Widget>[
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.75,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            ListTile(
-                              title: TextFormField(
-                                style: TextStyle(color: Colors.white),
-                                cursorColor: Colors.white,
-                                onChanged: raiseComplaintBloc.getSubject,
-                                decoration: InputDecoration(
-                                    focusedBorder: UnderlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.white)),
-                                    labelText: "Subject",
-                                    labelStyle: TextStyle(
-                                      color: Colors.white,
-                                    )),
-                              ),
-                            ),
-                            ListTile(
-                              title: TextFormField(
-                                cursorColor: Colors.white,
-                                style: TextStyle(color: Colors.white),
-                                onChanged: raiseComplaintBloc.getMessage,
-                                maxLines: 7,
-                                decoration: InputDecoration(
-                                    focusedBorder: UnderlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.white)),
-                                    labelText: "Message",
-                                    labelStyle: TextStyle(
-                                      color: Colors.white,
-                                    )),
-                              ),
-                            ),
-                            Card(
-                              shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.black)),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width * 0.4,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.15,
-                                child: img == null
-                                    ? Center(
-                                        child: Icon(Icons.queue),
-                                      )
-                                    : Image.file(
-                                        img,
-                                        fit: BoxFit.cover,
-                                      ),
-                              ),
-                            ),
-                            Center(
-                              child: RaisedButton(
-                                color: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12.0),
-                                    side: BorderSide(color: Colors.black)),
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                      context: context,
-                                      backgroundColor: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(15.0),
-                                            topRight: Radius.circular(15.0)),
-                                      ),
-                                      builder: (context) {
-                                        return Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: <Widget>[
-                                            ListTile(
-                                              leading: Icon(Icons.collections),
-                                              title:
-                                                  Text('Choose From Gallery'),
-                                              onTap: () {
-                                                getImageFromGallery();
-                                                Navigator.pop(context);
-                                              },
-                                            ),
-                                            ListTile(
-                                              leading: Icon(Icons.camera_alt),
-                                              title: Text('Take A Photo'),
-                                              onTap: () {
-                                                getImageFromCamera();
-                                                Navigator.pop(context);
-                                              },
-                                            ),
-                                          ],
-                                        );
-                                      });
-                                },
-                                child: Text(
-                                  "Pick Image",
-                                  style: TextStyle(fontSize: 20.0),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.9,
-                              child: RaisedButton(
-                                color: Colors.white,
-                                onPressed: () async {
-                                  print("Clicked");
-                                  raiseComplaintBloc.dialogLoader(context);
-
-                                  raiseComplaintBloc.image.value = img;
-                                  resp =
-                                      await raiseComplaintBloc.raiseComplaint();
-                                  if (resp == 'success') {
-                                    Navigator.pop(context);
-                                    _scaffoldKey.currentState.showSnackBar(
-                                        new SnackBar(
-                                            content: new Text(
-                                                "Complaint Raised Successfully !",
-                                                style: TextStyle(
-                                                    fontFamily: 'Raleway'))));
-                                  } else {
-                                    Navigator.pop(context);
-                                    _scaffoldKey.currentState.showSnackBar(
-                                        new SnackBar(
-                                            content: new Text(
-                                                "Please Try Again later !",
-                                                style: TextStyle(
-                                                    fontFamily: 'Ralweway'))));
-                                  }
-                                },
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    side: BorderSide(
-                                        color: Colors.black, width: 2.0)),
-                                child: Text(
-                                  "Register",
-                                  style: TextStyle(
-                                    color: Colors.black,
+                  Form(
+                    key: _formKey,
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: <Widget>[
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.77,
+                          child: Card(
+                            color: Colors.blue,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                ListTile(
+                                  title: TextFormField(
+                                    focusNode: nodeSubject,
+                                    controller: subjectController,
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Please Enter  subject !';
+                                      }
+                                      return null;
+                                    },
+                                    style: TextStyle(color: Colors.white),
+                                    cursorColor: Colors.white,
+                                    onChanged: raiseComplaintBloc.getSubject,
+                                    decoration: InputDecoration(
+                                        focusedBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: Colors.white)),
+                                        enabledBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: Colors.white)),
+                                        labelText: "Subject",
+                                        labelStyle: TextStyle(
+                                          color: Colors.white,
+                                        )),
                                   ),
                                 ),
-                              ),
-                            )
-                          ],
+                                ListTile(
+                                  title: TextFormField(
+                                    focusNode: nodeMessage,
+                                    controller: messageController,
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Please Enter  message !';
+                                      }
+                                      return null;
+                                    },
+                                    cursorColor: Colors.white,
+                                    style: TextStyle(color: Colors.white),
+                                    onChanged: raiseComplaintBloc.getMessage,
+                                    maxLines: 7,
+                                    decoration: InputDecoration(
+                                        enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: Colors.white)),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: Colors.white)),
+                                        hintText: "Write your messages here",
+                                        hintStyle: TextStyle(
+                                          color: Colors.white,
+                                        )),
+                                  ),
+                                ),
+                                Card(
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  borderOnForeground: true,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18),
+                                    
+                                      side: BorderSide(color: Colors.black)),
+                                  child: Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.7,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.15,
+                                    child: img == null
+                                        ? Center(
+                                            child: Icon(Icons.queue),
+                                          )
+                                        : Image.file(
+                                            img,
+                                            fit: BoxFit.cover,
+                                          ),
+                                  ),
+                                ),
+                                Center(
+                                  child: RaisedButton(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
+                                        side: BorderSide(color: Colors.black)),
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                          context: context,
+                                          backgroundColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(15.0),
+                                                topRight:
+                                                    Radius.circular(15.0)),
+                                          ),
+                                          builder: (context) {
+                                            return Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                ListTile(
+                                                  leading:
+                                                      Icon(Icons.collections),
+                                                  title: Text(
+                                                      'Choose From Gallery'),
+                                                  onTap: () {
+                                                    getImageFromGallery();
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                                ListTile(
+                                                  leading:
+                                                      Icon(Icons.camera_alt),
+                                                  title: Text('Take A Photo'),
+                                                  onTap: () {
+                                                    getImageFromCamera();
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          });
+                                    },
+                                    child: Text(
+                                      "Pick Image",
+                                      style: TextStyle(fontSize: 20.0),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.9,
+                                  child: RaisedButton(
+                                    color: Colors.white,
+                                    onPressed: () async {
+                                      if (_formKey.currentState.validate()) {
+                                        raiseComplaintBloc
+                                            .dialogLoader(context);
+
+                                        raiseComplaintBloc.image.value = img;
+                                        resp = await raiseComplaintBloc
+                                            .raiseComplaint();
+                                        if (resp == 'success') {
+                                          FocusScope.of(context)
+                                              .requestFocus(nodeSubmitButton);
+                                          Navigator.pop(context);
+                                          _scaffoldKey.currentState
+                                              .showSnackBar(new SnackBar(
+                                                  content: new Text(
+                                                      "Complaint Raised Successfully !",
+                                                      style: TextStyle(
+                                                          fontFamily:
+                                                              'Raleway'))));
+                                          subjectController.clear();
+                                          messageController.clear();
+                                        } else {
+                                          FocusScope.of(context)
+                                              .requestFocus(nodeSubmitButton);
+                                          Navigator.pop(context);
+                                          _scaffoldKey.currentState
+                                              .showSnackBar(new SnackBar(
+                                                  content: new Text(
+                                                      "Please Try Again later !",
+                                                      style: TextStyle(
+                                                          fontFamily:
+                                                              'Ralweway'))));
+                                          subjectController.clear();
+                                          messageController.clear();
+                                        }
+                                      }
+                                    },
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        side: BorderSide(
+                                            color: Colors.black, width: 2.0)),
+                                    child: Text(
+                                      "Register",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
 
                   //Past Transactions
                   RefreshIndicator(
                     onRefresh: getRefresh,
-                    child: complaints.length == 0
-                        ? Center(child: Text("No complaints found !"))
-                        : ListView.builder(
-                            itemCount: complaints.length,
-                            itemBuilder: (ctx, index) => Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.2,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        print(complaints[index].id.toString());
-                                        Navigator.push(context,
-                                            MaterialPageRoute(builder: (_) {
-                                          return ComplaintsDiscussions(
-                                              complaints[index].listDiscussions,
-                                              complaints[index].id);
-                                        }));
-                                      },
-                                      child: Card(
-                                        semanticContainer: true,
-                                        clipBehavior:
-                                            Clip.antiAliasWithSaveLayer,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10.0)),
-                                        color: Colors.white,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: <Widget>[
-                                            Container(
-                                                child: Image.network(
-                                              'https://picsum.photos/200/300',
-                                              fit: BoxFit.fill,
-                                              width: 110,
-                                            )),
-                                            Expanded(
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Container(
-                                                    margin: EdgeInsets.only(
-                                                        left: 10),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: <Widget>[
-                                                        Expanded(
-                                                          child: Text(
-                                                            complaints[index]
-                                                                .subject
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .blue),
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.8,
+                      child: complaints.length == 0
+                          ? Center(child: Text("No complaints found !"))
+                          : ListView.builder(
+                              itemCount: complaints.length,
+                              itemBuilder: (ctx, index) => Container(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.2,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          print(
+                                              complaints[index].id.toString());
+                                          Navigator.push(context,
+                                              MaterialPageRoute(builder: (_) {
+                                            return ComplaintsDiscussions(
+                                                complaints[index]
+                                                    .listDiscussions,
+                                                complaints[index].id);
+                                          }));
+                                        },
+                                        child: Card(
+                                          semanticContainer: true,
+                                          clipBehavior:
+                                              Clip.antiAliasWithSaveLayer,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0)),
+                                          color: Colors.blue,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: <Widget>[
+                                              Container(
+                                                  child: Image.network(
+                                                'https://picsum.photos/200/300',
+                                                fit: BoxFit.fill,
+                                                width: 110,
+                                              )),
+                                              Expanded(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          left: 10),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: <Widget>[
+                                                          Expanded(
+                                                            child: Text(
+                                                              complaints[index]
+                                                                  .subject
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
                                                           ),
-                                                        ),
-                                                      ],
+                                                        ],
+                                                      ),
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                          ],
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                )),
+                                  )),
+                    ),
                   )
                 ],
               ),
